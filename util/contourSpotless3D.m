@@ -21,7 +21,7 @@ grid_size = 50;
   linspace(-R_diag(3), R_diag(3), grid_size));
 
 % ellipsoid
-sizecheck(R_diag, 3);
+% sizecheck(R_diag, 3);
 A = diag(1./(R_diag.^2));
 h_X = 1 - vars'*A*vars;
 h_Xs = full(msubs(h_X, vars, [x1s_grid(:)';x2s_grid(:)'; x3s_grid(:)']));

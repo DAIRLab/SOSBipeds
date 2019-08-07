@@ -57,7 +57,7 @@ end
 
 hold_value = ishold;
 
-h = zeros(n_contour,1);
+h = cell(n_contour,1);
 
 for i=1:n_contour
   POLY_VAL = reshape(msubs(poly(i),[x_var;y_var],[X_VALS(:)';Y_VALS(:)']),size(X_VALS,1),[]) + offset;
@@ -67,13 +67,13 @@ for i=1:n_contour
   end
 
   if ~isempty(color) && ~isempty(contour_value)
-    [cl,h(i)]=contour(X_VALS,Y_VALS,POLY_VAL,[contour_value(i) contour_value(i)]+offset,color{i});
+    [cl,h{i}]=contour(X_VALS,Y_VALS,POLY_VAL,[contour_value(i) contour_value(i)]+offset,color{i});
   elseif ~isempty(color)
-    [cl,h(i)]=contour(X_VALS,Y_VALS,POLY_VAL,color{i});
+    [cl,h{i}]=contour(X_VALS,Y_VALS,POLY_VAL,color{i});
   elseif ~isempty(contour_value)
-    [cl,h(i)]=contour(X_VALS,Y_VALS,POLY_VAL,[contour_value(i) contour_value(i)]+offset);
+    [cl,h{i}]=contour(X_VALS,Y_VALS,POLY_VAL,[contour_value(i) contour_value(i)]+offset);
   else
-    [cl,h(i)]=contour(X_VALS,Y_VALS,POLY_VAL);
+    [cl,h{i}]=contour(X_VALS,Y_VALS,POLY_VAL);
   end
 %   clabel(cl);
   
