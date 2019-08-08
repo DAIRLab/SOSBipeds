@@ -11,7 +11,7 @@ r = model.reset(t, x, []);
 
 W = find_W(t, x, r, V);
 
-load('switch_over.mat', 'V', 'S', 'model', 'W');
+% load('switch_over.mat', 'V', 'S', 'model', 'W');
 
 display_array = [0, 0, 0, 0; 0, 0.1, 0.2, 0.3];
 % Display for W <= 1
@@ -29,7 +29,8 @@ radius.inner = 0.1;
 Q_init = double(subs(diff(diff(V,x)',x)/2,x,zeros(nX,1)));
 T = eye(model.num_states);
 
-S(2) = x(1) - x(3) +  x(2)/sqrt(model.g);
+S(1) = x(1) + x(2)/sqrt(model.g/model.z_nom);
+S(2) = x(1) - x(3) +  x(2)/sqrt(model.g/model.z_nom);
 rho = 1;
 for i=1:50
     [old_multipliers] = find_multipliers(t, x, model, V, W, S, radius, T, 1);
