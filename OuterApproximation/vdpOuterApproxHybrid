@@ -92,7 +92,7 @@ R{2,1} = x{2};
 
 options.freeFinalTime = 0;
 
-[sol, Wsol] = outerApproximation_new(t, x, F, hX, sX, R, hXT, d, options);
+[sol, Wsol] = outerApproximationHybrid(t, x, F, hX, sX, R, hXT, d, options);
 
 sol.status
 
