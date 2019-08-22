@@ -1,4 +1,4 @@
-load('wrong_V_S.mat', 'V', 'S', 'model', 'W');
+load('switch_over.mat', 'V', 'S', 'model', 'W');
 
 t = msspoly('t', 1);
 x_s = msspoly('x', model.num_states);

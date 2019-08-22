@@ -1,5 +1,5 @@
 load('V0_inner_LIPMSwingLeg.mat', 'V', 'model', 'S');
-
+ 
 nX = model.num_states;
 nU = model.num_inputs;
 
@@ -8,9 +8,11 @@ t = msspoly('t', 1);
 u = msspoly('u', nU);
 
 r = model.reset(t, x, []);
-
+ 
 W = find_W(t, x, r, V);
 
+% Load this to evaluate the multipliers when the alternations fail (last
+% iteration of alternations)
 % load('switch_over.mat', 'V', 'S', 'model', 'W');
 
 display_array = [0, 0, 0, 0; 0, 0.1, 0.2, 0.3];
@@ -29,13 +31,14 @@ radius.inner = 0.1;
 Q_init = double(subs(diff(diff(V,x)',x)/2,x,zeros(nX,1)));
 T = eye(model.num_states);
 
+% Controller initialization
 S(1) = x(1) + x(2)/sqrt(model.g/model.z_nom);
 S(2) = x(1) - x(3) +  x(2)/sqrt(model.g/model.z_nom);
 rho = 1;
 for i=1:50
     [old_multipliers] = find_multipliers(t, x, model, V, W, S, radius, T, 1);
     multipliers = old_multipliers;
-    [V, S] = find_functions(t, x, model, V, W, multipliers, radius, T, 8);
+    [V, S] = find_functions(t, x, model, V, W, multipliers, radius, T, 6);
     
     if mod(i, 20) == 0
         close all;
@@ -97,7 +100,7 @@ for i=1:iterations
     end
     
     spot_options = spotprog.defaultOptions;
-    spot_options.verbose = 0;
+    spot_options.verbose = 1;
     spot_options.sos_slack = -1e-6;
     spot_options.clean_primal = false;
     spot_options.scale_monomials = true;
@@ -109,7 +112,7 @@ for i=1:iterations
     disp(sol.status);
     disp('gamma: ');
     disp(double(sol.eval(gamma)));
-    if sol.status == spotsolstatus.STATUS_PRIMAL_AND_DUAL_FEASIBLE && double(sol.eval(gamma)) < 1e-2 % modified -1e-6
+    if sol.status == spotsolstatus.STATUS_PRIMAL_AND_DUAL_FEASIBLE && double(sol.eval(gamma)) < 1e-2 % modified from -1e-6
         for j=1:2^nU
             mult_opt{j} = sol.eval(mult{j});
             wmult_opt{j} = sol.eval(wmult{j});
@@ -120,7 +123,7 @@ for i=1:iterations
         multipliers.mult = mult_opt;
         multipliers.wmult = wmult_opt;
         multipliers.smult = smult_opt;
-    elseif sol.status == spotsolstatus.STATUS_NUMERICAL_PROBLEMS && double(sol.eval(gamma)) < 1e-2 % modified -1e-6
+    elseif sol.status == spotsolstatus.STATUS_NUMERICAL_PROBLEMS && double(sol.eval(gamma)) < 1e-2 % modified from -1e-6
         for j=1:2^nU
             mult_opt{j} = sol.eval(mult{j});
             wmult_opt{j} = sol.eval(wmult{j});
@@ -220,7 +223,7 @@ for i=1:iterations
     prog = prog.withPos(cost_val - cost);
     
     spot_options = spotprog.defaultOptions;
-    spot_options.verbose = 0;
+    spot_options.verbose = 1;
     spot_options.sos_slack = -1e-6;
     spot_options.clean_primal = false;
     spot_options.scale_monomials = true;
@@ -281,7 +284,7 @@ nX = length(x);
 A_diag = ones(1,nX)*radius;
 cost = spotlessIntegral(prog,V,x,A_diag,[],[]);
 
-% When V is not known this line throws an error. Debug tomorrow.
+% When V is not known this line throws an error. Debug this later.
 % Q_init = double(subs(diff(diff(V, x)', x)/2, x, zeros(nX, 1))); %#ok<UDIM>
 % cost = spotlessIntegral(prog, V, x, diag(Q_init)', [], []);
 
@@ -295,7 +298,6 @@ cost = spotlessIntegral(prog,V,x,A_diag,[],[]);
 
 % cost_line = spotlessIntegral(prog, V, [x(1) - x(3); -x(3)], ones(1, 2), [], []);
 
-%
 if isnumeric(cost)
   cost_const = cost;
   cost = 0;
