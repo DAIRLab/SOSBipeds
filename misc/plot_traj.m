@@ -1,11 +1,15 @@
-load('switch_over.mat', 'V', 'S', 'model', 'W');
+function [] = plot_traj(x)
+load('V0_inner_LIPMSwingLeg.mat', 'V');
+V0 = V;
+load('V1_inner_swing_leg.mat', 'V', 'S', 'model', 'W');
+x_mss = msspoly('x', model.num_states);
+S(1) = x_mss(1) + x_mss(2)/sqrt(model.g/model.z_nom);
+S(2) = x_mss(1) - x_mss(3) +  x_mss(2)/sqrt(model.g/model.z_nom);
 
 t = msspoly('t', 1);
 x_s = msspoly('x', model.num_states);
 
 dt = 0.01;
-% x = [0.15; -0.016; 0.2];
-x = [0.04609; -0.4629; 0.24];
 x_hist = x;
 has_stepped = false;
 for i=1:1000
@@ -24,7 +28,7 @@ for i=1:1000
         ar = x;
         x_hist = [x_hist, ar];
         load('V0_inner_LIPMSwingLeg', 'V', 'S', 'model');
-    elseif abs(x(1)) < 0.01 && abs(x(2)) < 0.01
+    elseif has_stepped && abs(x(1)) < 0.01 && abs(x(2)) < 0.01
         fprintf('Balance');
         i
         break
@@ -35,7 +39,7 @@ for i=1:1000
 end
 
 figure(1);
-plot3(x_hist(1, :), x_hist(2, :), x_hist(3, :));
+plot3(x_hist(1, :), x_hist(2, :), x_hist(3, :), 'm', 'LineWidth', 3);
 hold on;
 scatter3(br(1), br(2), br(3), 'g');
 scatter3(ar(1), ar(2), ar(3), 'r');
@@ -43,3 +47,4 @@ grid on;
 xlabel('x');
 ylabel('x_dot');
 zlabel('x_leg');
+end
