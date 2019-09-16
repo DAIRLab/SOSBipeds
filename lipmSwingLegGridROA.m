@@ -1,6 +1,30 @@
 function [] = lipmSwingLegGridROA(inner_approx)
 if nargin < 1
-    inner_approx = false;
+    inner_approx = 0;
+end
+if inner_approx==2
+    if isfile('gridded_ROA.mat')
+        load('gridded_ROA.mat', 'X1', 'X2', 'X3')
+        scatter3(X1, X2, X3, 'b');
+        hold on;
+    end
+    if isfile('gridded_1step_goal.mat')
+        load('gridded_1step_goal.mat', 'W1', 'W2', 'W3')
+        scatter3(W1, W2, W3, 'g');
+    end
+    if isfile('all_points_inside_V.mat')
+        load('all_points_inside_V.mat', 'X1', 'X2', 'X3')
+        scatter3(X1, X2, X3, 'r');
+    end
+    if isfile('points_inside_V.mat')
+        load('points_inside_V.mat', 'X1', 'X2', 'X3')
+        scatter3(X1, X2, X3, 'r');
+    end
+    xlabel('$x_{cm}$', 'Interpreter', 'latex');
+    ylabel('$v_{cm}$', 'Interpreter', 'latex');
+    zlabel('$x_{leg}$', 'Interpreter', 'latex');
+    legend('1-step capturability', '1-step goal region', 'Inner Approximation');
+    return
 end
 load('V0_inner_LIPMSwingLeg.mat', 'V');
 V0 = V;
@@ -45,11 +69,12 @@ for i = -1:0.1:1
         end
     end
 end
-if inner_approx
-    scatter3(X1, X2, X3, 'r')
-else
+if inner_approx == 0
     scatter3(X1, X2, X3, 'b')
+elseif inner_approx == 1
+    scatter3(X1, X2, X3, 'r')
 end
 hold on;
 scatter3(W1, W2, W3, 'g')
+keyboard
 end
