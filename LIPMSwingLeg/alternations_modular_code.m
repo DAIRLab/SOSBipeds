@@ -62,7 +62,7 @@ else
     end
 
     S = Bu;
-    save('V0_inner_LIPMSwingLeg.mat','V','model','S');
+    save('../data/V0_inner_LIPMSwingLeg.mat','V','model','S');
     return
 end
 

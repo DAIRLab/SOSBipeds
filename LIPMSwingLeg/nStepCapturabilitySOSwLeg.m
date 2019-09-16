@@ -271,5 +271,5 @@ end
 
 function filename = solutionFileName(model, n)
 filename_suffix = class(model);
-filename = sprintf(['V%d_' filename_suffix '.mat'], n);
+filename = sprintf(['../data/V%d_' filename_suffix '.mat'], n);
 end

@@ -33,4 +33,4 @@ plot_figures(1, [sol.eval(rho)], [x(1), x(2)], [-1, 1], [-1, 1], ...
 
 keyboard
 % I_w = sol.eval(rho);
-% save('W_indicator_function.mat', 'I_w');
+% save('../data/W_indicator_function.mat', 'I_w');
